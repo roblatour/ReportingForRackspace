@@ -81,9 +81,9 @@ Public Class frmMain
     End Structure
 
     Dim LogTableIndex As Integer = 0
-    Const LogTableIncrement As Integer = 100
-    Dim LogTableMaxSize As Integer = LogTableIncrement
-    Dim LogTable(LogTableMaxSize) As LogContent
+    Dim LogTableSize As Integer = 1
+    Dim LogTable(LogTableSize) As LogContent
+
 
     '************************************************************************************************************************************************************************************************************
     Structure TotalReportContent
@@ -107,9 +107,7 @@ Public Class frmMain
     End Structure
 
     Dim TotalReportTableIndex As Integer = 0
-    Const TotalReportTableIncrement As Integer = 100
-    Dim TotalReportTableMaxSize As Integer = TotalReportTableIncrement
-    Dim TotalReportTable(TotalReportTableMaxSize) As TotalReportContent
+    Dim TotalReportTable(LogTableSize) As TotalReportContent
 
     '************************************************************************************************************************************************************************************************************
     Structure FileNameByDateTableContent
@@ -423,12 +421,8 @@ Public Class frmMain
         LogFilesDownloadedButNotDeletedFromCloudInThisSession.Clear()
 
         LogTableIndex = 0
-        LogTableMaxSize = LogTableIncrement
-        ReDim LogTable(LogTableMaxSize)
-
         TotalReportTableIndex = 0
-        TotalReportTableMaxSize = TotalReportTableIncrement
-        ReDim TotalReportTable(TotalReportTableMaxSize)
+        ReDim TotalReportTable(LogTableSize)
 
         FilenameByDateTableIndex = 0
         FilenameByDateTableMaxSize = FilenameByDateTableIncrement
@@ -1173,152 +1167,167 @@ Public Class frmMain
 
         Try
 
-
             Dim filename As String = gCombinedFolder & "\" & cCombineFileName
 
             Const ValidReturnCodes As String = " 200; 206; 301; 302; 304; 400; 401; 403; 404; 408; 410; 414; "
 
-            Dim wa() As String
-            Dim ws As String = String.Empty
-            Dim wsDateTime As String
             Dim Index As Integer = 0
-            Dim wi As Integer = 0
 
             Dim lStartDate, lEndDate As Date
             Dim lAllDates As Boolean
             SetStartAndEndDates(lStartDate, lEndDate, lAllDates)
 
-            For Each ContentLine As String In System.IO.File.ReadLines(filename)
+            Dim lineCount As Integer = File.ReadLines(filename).Count()
+            ReDim Preserve LogTable(lineCount)
 
-                If ContentLine.Trim.Length > 0 Then
+            Parallel.ForEach(System.IO.File.ReadLines(filename), Sub(ContentLine As String)
 
-                    If Index > LogTableMaxSize Then
-                        LogTableMaxSize += LogTableIncrement
-                        ReDim Preserve LogTable(LogTableMaxSize)
-                    End If
+                                                                     If ContentLine.Trim.Length > 0 Then
 
-                    Try
+                                                                         Try
 
-                        wa = Nothing
-                        wa = ContentLine.Split(" ")
+                                                                             Dim wa() As String
+                                                                             wa = ContentLine.Split(" ")
 
-                        ' ************** Load Date and Time
-                        ws = wa(3).Remove(0, 1)
-                        wsDateTime = ws.Remove(10) & " " & ws.Remove(0, 11)
-                        LogTable(Index).LogDateTime = DateTime.ParseExact(wsDateTime, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture)
+                                                                             ' ************** Load Date and Time
+                                                                             Dim ws As String = wa(3).Remove(0, 1)
 
-                        If lAllDates Then
-                        Else
-                            If (LogTable(Index).LogDateTime.Date < lStartDate) OrElse (LogTable(Index).LogDateTime.Date > lEndDate) Then
-                                Exit Try ' skip record
-                            End If
-                        End If
+                                                                             Dim wsDateTime As String = ws.Remove(10) & " " & ws.Remove(0, 11)
 
-                        ' ************** Load Data Transferred
-                        LogTable(Index).DataTransferred = CType(wa(9).Trim, Long)
+                                                                             Dim wdt As DateTime = DateTime.ParseExact(wsDateTime, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture)
 
+                                                                             If lAllDates Then
+                                                                             Else
+                                                                                 If (wdt < lStartDate) OrElse (wdt > lEndDate) Then
+                                                                                     Exit Try ' skip record
+                                                                                 End If
+                                                                             End If
 
-                        ' ************** Load Return Code
-                        '200 - OK; indicates a successful request resulting in a file being returned.
-                        '206 - Partial Content; indicates that a file was only partially downloaded. The download could have been interrupted by someone leaving the page before it's fully loaded (in the case of embedded images) or cancelling a download (in the case of PDF, MP3 and similar file types).
-                        '301 - Moved Permanently; the Server has indicated that the requested file Is now located at a New address. Search engines should update their index by removing the old address And replacing it (PR intact) with the New one.
-                        '302 - Found ; the User has been redirected, but as it's not a Permanent redirect no further action needs to be taken. This could be as simple as the server adding a / to the end of the request, or the result of a header command in PHP.
-                        '304 - Not Modified; an intelligent user agent (browser) has made a request for a file which Is already present in it's cache. A 304 indicates that the cached version has the same timestamp as the 'live' version of the file so they don't need to download it. If the 'live' file was newer then the response would instead be a 200.
-                        '400 - Bad Request; the Server couldn't make sense of the request.
-                        '401 - Unauthorised (password required); an attempt has been made to access a directory Or file that requires authentication (username And password). Subsequent requests would normally contain a username And password, resulting in either a 200 (user has been authenticated) Or 401 (authentication failed).
-                        '403 - Forbidden; the Server has blocked access to a directory Or file. This typically applies to requests that would otherwise result in a directory listing being displayed.
-                        '404 - Not Found; the requested file does Not exist on the server. This normally indicates a broken link (internal Or external).
-                        '408 - Request Timeout; the client / Server connection process was so slow that the server decided to 'hang up'.
-                        '410 - Gone; the Server has indicated that the requested file used to exist but has now been permanently removed. Search engines should remove the address from their index
-                        '414 - Request-URI Too Long; the request was too long. This normally indicates an attempt to compromise the server using a buffer overflow exploit.
-                        ws = wa(8).Trim
+                                                                             ' ************** Load Data Transferred
+                                                                             Dim wDataTransfered As Long = CType(wa(9).Trim, Long)
 
-                        If ValidReturnCodes.Contains(" " & ws & "; ") Then
-                            LogTable(Index).ReturnCode = CType(ws, Integer)
-                        Else
+                                                                             ' ************** Load Return Code
+                                                                             '200 - OK; indicates a successful request resulting in a file being returned.
+                                                                             '206 - Partial Content; indicates that a file was only partially downloaded. The download could have been interrupted by someone leaving the page before it's fully loaded (in the case of embedded images) or cancelling a download (in the case of PDF, MP3 and similar file types).
+                                                                             '301 - Moved Permanently; the Server has indicated that the requested file Is now located at a New address. Search engines should update their index by removing the old address And replacing it (PR intact) with the New one.
+                                                                             '302 - Found ; the User has been redirected, but as it's not a Permanent redirect no further action needs to be taken. This could be as simple as the server adding a / to the end of the request, or the result of a header command in PHP.
+                                                                             '304 - Not Modified; an intelligent user agent (browser) has made a request for a file which Is already present in it's cache. A 304 indicates that the cached version has the same timestamp as the 'live' version of the file so they don't need to download it. If the 'live' file was newer then the response would instead be a 200.
+                                                                             '400 - Bad Request; the Server couldn't make sense of the request.
+                                                                             '401 - Unauthorised (password required); an attempt has been made to access a directory Or file that requires authentication (username And password). Subsequent requests would normally contain a username And password, resulting in either a 200 (user has been authenticated) Or 401 (authentication failed).
+                                                                             '403 - Forbidden; the Server has blocked access to a directory Or file. This typically applies to requests that would otherwise result in a directory listing being displayed.
+                                                                             '404 - Not Found; the requested file does Not exist on the server. This normally indicates a broken link (internal Or external).
+                                                                             '408 - Request Timeout; the client / Server connection process was so slow that the server decided to 'hang up'.
+                                                                             '410 - Gone; the Server has indicated that the requested file used to exist but has now been permanently removed. Search engines should remove the address from their index
+                                                                             '414 - Request-URI Too Long; the request was too long. This normally indicates an attempt to compromise the server using a buffer overflow exploit.
+                                                                             ws = wa(8).Trim
 
-                            'if an invalid return code is received and there was data transferred, assume it is for a partial content request, otherwise mark it as a bad request
+                                                                             Dim wReturnCode As Integer
 
-                            If LogTable(Index).DataTransferred > 0 Then
-                                LogTable(Index).ReturnCode = 206
-                            Else
-                                LogTable(Index).ReturnCode = 400
-                            End If
+                                                                             If ValidReturnCodes.Contains(" " & ws & "; ") Then
+                                                                                 wReturnCode = CType(ws, Integer)
 
-                        End If
+                                                                             Else
 
-                        If gIgnore400Requests AndAlso (LogTable(Index).ReturnCode > 399) AndAlso (LogTable(Index).ReturnCode < 500) Then
-                            Exit Try 'skip record
-                        End If
+                                                                                 'if an invalid return code is received and there was data transferred, assume it is for a partial content request, otherwise mark it as a bad request
 
-                        ' ************** Load Filename
-                        ws = wa(6).Remove(0, 1)
-                        ws = ws.Remove(0, ws.IndexOf("/") + 1)
-                        wi = ws.IndexOf("?")
-                        If wi = -1 Then
-                            LogTable(Index).Filename = ws
-                        Else
-                            LogTable(Index).Filename = ws.Remove(wi)
-                        End If
+                                                                                 If wDataTransfered > 0 Then
+                                                                                     wReturnCode = 206
+                                                                                 Else
+                                                                                     wReturnCode = 400
+                                                                                 End If
 
+                                                                             End If
 
-                        ' If LogTable(Index).Filename.ToLower = "arulersetup.exe" Then xxx += 1
+                                                                             If gIgnore400Requests AndAlso (wReturnCode > 399) AndAlso (wReturnCode < 500) Then
+                                                                                 Exit Try 'skip record
+                                                                             End If
 
-                        LogTable(Index).Filename = LogTable(Index).Filename.Replace("%2E", ".") ' v 1 - updated Feb 26 2017
+                                                                             ' ************** Load Filename
+                                                                             ws = wa(6).Remove(0, 1)
+                                                                             ws = ws.Remove(0, ws.IndexOf("/") + 1)
+                                                                             Dim wi As Integer = ws.IndexOf("?")
 
-                        Dim CheckFilename As String = LogTable(Index).Filename
-                        If CheckFilename.Contains("?") Then CheckFilename = CheckFilename.Remove(CheckFilename.IndexOf("?"))
+                                                                             Dim wFileName As String
 
-                        If (LogTable(Index).ReturnCode > 399) AndAlso (LogTable(Index).ReturnCode < 500) Then
-                        Else
-                            'if a 400 series return code, don't add the filename to the list of unique filenames (even if the option to ignor the 400 series return codes is not checked)
-                            gUniqueFilenames.Add(CheckFilename)
-                        End If
+                                                                             If wi = -1 Then
+                                                                                 wFileName = ws.ToLower
+                                                                             Else
+                                                                                 wFileName = ws.Remove(wi).ToLower
+                                                                             End If
 
-                        CheckFilename = CheckFilename.ToUpper
+                                                                             ' If wFileName = "arulersetup.exe" Then xxx += 1
 
-                        If CheckFilename = String.Empty Then
-                            Exit Try 'skip record
-                        ElseIf (gIncludeExcludeFlag = "Include specific files only") AndAlso (Not (gFilesToInclude.Contains(CheckFilename))) Then
-                            Exit Try 'skip record
-                        ElseIf (gIncludeExcludeFlag = "Exclude specific files") AndAlso (gFilesToExclude.Contains(CheckFilename)) Then
-                            Exit Try 'skip record
-                        End If
+                                                                             Dim wCheckFilename As String = wFileName
+                                                                             If wCheckFilename.Contains("?") Then wCheckFilename = wCheckFilename.Remove(wCheckFilename.IndexOf("?"))
 
+                                                                             If (wReturnCode > 399) AndAlso (wReturnCode < 500) Then
+                                                                             Else
+                                                                                 'if a 400 series return code, don'tadd the filename to the list of unique filenames (even if the option to ignor the 400 series return codes is not checked)
+                                                                                 SyncLock gUniqueFilenames
+                                                                                     gUniqueFilenames.Add(wCheckFilename)
+                                                                                 End SyncLock
 
-                        ' ************** Load IP Address
-                        LogTable(Index).IPAddress = wa(0)
+                                                                             End If
 
+                                                                             wCheckFilename = wCheckFilename.ToUpper
 
-                        ' ************** Load Action
-                        If wa(5).Contains("GET") Then
-                            LogTable(Index).Action = GetOrCheck.GetFile
-                        Else
-                            LogTable(Index).Action = GetOrCheck.CheckFile
-                        End If
+                                                                             If wCheckFilename = String.Empty Then
+                                                                                 Exit Try 'skip record
+                                                                             ElseIf (gIncludeExcludeFlag = "Include specific files only") AndAlso (Not (gFilesToInclude.Contains(wCheckFilename))) Then
+                                                                                 Exit Try 'skip record
+                                                                             ElseIf (gIncludeExcludeFlag = "Exclude specific files") AndAlso (gFilesToExclude.Contains(wCheckFilename)) Then
+                                                                                 Exit Try 'skip record
+                                                                             End If
 
 
-                        ' ************** Load ReferingPage
-                        LogTable(Index).ReferingPage = wa(10).Replace("""", "")
-                        If LogTable(Index).ReferingPage.ToUpper.EndsWith("INDEX.HTML") Then
-                            LogTable(Index).ReferingPage = LogTable(Index).ReferingPage.Remove(LogTable(Index).ReferingPage.Length - 10)
-                        End If
-
-                        Index += 1
+                                                                             ' ************** Load IP Address
+                                                                             Dim wIPAddress As String = wa(0)
 
 
-                    Catch ex As Exception
+                                                                             ' ************** Load Action
+                                                                             Dim wAction As GetOrCheck
+                                                                             If wa(5).Contains("GET") Then
+                                                                                 wAction = GetOrCheck.GetFile
+                                                                             Else
+                                                                                 wAction = GetOrCheck.CheckFile
+                                                                             End If
 
-                        ' Console.WriteLine("Skipping: " & ContentLine)
 
-                    End Try
+                                                                             ' ************** Load ReferingPage
+                                                                             Dim wReferingPage As String = wa(10).Replace("""", "")
 
-                End If
+                                                                             If wReferingPage.ToUpper.EndsWith("INDEX.HTML") Then
+                                                                                 wReferingPage = wReferingPage.Remove(wReferingPage.Length - 10)
+                                                                             End If
 
-            Next
 
-            LogTableMaxSize = Index - 1
-            ReDim Preserve LogTable(LogTableMaxSize)
+                                                                             SyncLock LogTable
+
+                                                                                 LogTable(Index).LogDateTime = wdt
+                                                                                 LogTable(Index).DataTransferred = wDataTransfered
+                                                                                 LogTable(Index).ReturnCode = wReturnCode
+                                                                                 LogTable(Index).Filename = wFileName.Replace("%2E", ".")
+                                                                                 LogTable(Index).IPAddress = wIPAddress
+                                                                                 LogTable(Index).Action = wAction
+                                                                                 LogTable(Index).ReferingPage = wReferingPage
+
+                                                                                 Index += 1
+
+                                                                             End SyncLock
+
+
+                                                                         Catch ex As Exception
+
+                                                                         End Try
+
+                                                                     End If
+
+                                                                 End Sub)
+
+
+            LogTableSize = Index - 1
+
+            ReDim Preserve LogTable(LogTableSize)
 
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -1424,83 +1433,72 @@ Public Class frmMain
 
         End If
 
-        System.Threading.Tasks.Parallel.Invoke(Sub()
-                                                   CreateTotalReportTable()
-                                               End Sub,
-                        Sub()
-                            CreateFileNameByDateTable()
-                        End Sub,
-                        Sub()
-                            CreateTop10CountriesTable()
-                        End Sub,
-                        Sub()
-                            CreateRefererTable()
-                        End Sub,
-                        Sub()
-                            CreateIPTable()
-                        End Sub)
+        CreateTotalReportTable()
+        CreateFileNameByDateTable()
+        CreateTop10CountriesTable()
+        CreateRefererTable()
+        CreateIPTable()
 
 
     End Sub
-
     Private Sub CreateTotalReportTable()
 
+        ReDim Preserve TotalReportTable(LogTableSize)
 
-        For Each LogEntry As LogContent In LogTable
+        Parallel.ForEach(LogTable, Sub(logentry As LogContent)
 
-            For x As Integer = 0 To TotalReportTableMaxSize
+                                       For x As Integer = 0 To LogTableSize
 
-                'ensure the Reporting Tables is always big enougth
-                If x = TotalReportTableMaxSize Then
-                    TotalReportTableMaxSize += TotalReportTableIncrement
-                    ReDim Preserve TotalReportTable(LogTableMaxSize)
-                End If
+                                           If TotalReportTable(x).FileName = String.Empty Then
 
-                If TotalReportTable(x).FileName = String.Empty Then
+                                               SyncLock (TotalReportTable)
+                                                   TotalReportTable(x).FileName = logentry.Filename
+                                                   TotalReportTable(x).CompletedDownloadCount = 0
+                                                   TotalReportTable(x).CompletedDownloadsBasedOnEquivalentPartialDownloadCount = 0
+                                                   TotalReportTable(x).PartialDownloadCount = 0
+                                                   TotalReportTable(x).CheckCount = 0
+                                                   TotalReportTable(x).DataTransferred = 0
+                                               End SyncLock
 
-                    TotalReportTable(x).FileName = LogEntry.Filename
-                    TotalReportTable(x).CompletedDownloadCount = 0
-                    TotalReportTable(x).CompletedDownloadsBasedOnEquivalentPartialDownloadCount = 0
-                    TotalReportTable(x).PartialDownloadCount = 0
-                    TotalReportTable(x).CheckCount = 0
-                    TotalReportTable(x).DataTransferred = 0
+                                           End If
 
-                End If
+                                           If TotalReportTable(x).FileName = logentry.Filename Then
 
-                If TotalReportTable(x).FileName = LogEntry.Filename Then
+                                               SyncLock (TotalReportTable)
+                                                   If logentry.Action = GetOrCheck.CheckFile Then
+                                                       TotalReportTable(x).CheckCount += 1
+                                                   Else
+                                                       If logentry.ReturnCode = 200 Then
+                                                           TotalReportTable(x).CompletedDownloadCount += 1
+                                                       Else
+                                                           If logentry.ReturnCode = 206 Then
+                                                               TotalReportTable(x).PartialDownloadCount += 1
+                                                           End If
+                                                       End If
+                                                   End If
 
-                    If LogEntry.Action = GetOrCheck.CheckFile Then
-                        TotalReportTable(x).CheckCount += 1
-                    Else
-                        If LogEntry.ReturnCode = 200 Then
-                            TotalReportTable(x).CompletedDownloadCount += 1
-                        Else
-                            If LogEntry.ReturnCode = 206 Then
-                                TotalReportTable(x).PartialDownloadCount += 1
-                            End If
-                        End If
-                    End If
+                                                   TotalReportTable(x).DataTransferred += logentry.DataTransferred
+                                               End SyncLock
 
-                    TotalReportTable(x).DataTransferred += LogEntry.DataTransferred
+                                               Exit For
 
-                    Exit For
+                                           End If
 
-                End If
+                                       Next
 
-            Next
+                                   End Sub)
 
-        Next
 
-        For x As Integer = 0 To TotalReportTableMaxSize
+        For x As Integer = 0 To LogTableSize
 
             If TotalReportTable(x).FileName = String.Empty Then
-                TotalReportTableMaxSize = x - 1
+                LogTableSize = x - 1
                 Exit For
             End If
 
         Next
 
-        ReDim Preserve TotalReportTable(TotalReportTableMaxSize)
+        ReDim Preserve TotalReportTable(LogTableSize)
 
         If gEquatePartialDownloads Then
             AddEquivalentCompletedDownloadsToTotalReportTable()
@@ -1608,57 +1606,69 @@ Public Class frmMain
         Return ReturnValue
 
     End Function
-
-
     Private Sub CreateFileNameByDateTable()
 
-        For Each LogEntry As LogContent In LogTable
+        System.Threading.Tasks.Parallel.ForEach(LogTable, Sub(LogEntry As LogContent)
 
-            Dim MatchingDate As Date = LogEntry.LogDateTime.Date
+                                                              Dim MatchingDate As Date = LogEntry.LogDateTime.Date
 
-            For x As Integer = 0 To FilenameByDateTableIndex
+                                                              For x As Integer = 0 To FilenameByDateTableIndex
 
-                If (FileNameByDateTable(x).FileName = String.Empty) AndAlso (FileNameByDateTable(x).DownloadDate = Nothing) Then
+                                                                  If (FileNameByDateTable(x).FileName = String.Empty) AndAlso (FileNameByDateTable(x).DownloadDate = Nothing) Then
 
-                    FileNameByDateTable(x).FileName = LogEntry.Filename
-                    FileNameByDateTable(x).DownloadDate = MatchingDate
+                                                                      SyncLock (FileNameByDateTable)
 
-                    If (LogEntry.Action = GetOrCheck.GetFile) AndAlso (LogEntry.ReturnCode = 200) Then FileNameByDateTable(x).DownloadCount += 1
+                                                                          FileNameByDateTable(x).FileName = LogEntry.Filename
+                                                                          FileNameByDateTable(x).DownloadDate = MatchingDate
 
-                    FileNameByDateTable(x).DataTransferred = LogEntry.DataTransferred
+                                                                          If (LogEntry.Action = GetOrCheck.GetFile) AndAlso (LogEntry.ReturnCode = 200) Then FileNameByDateTable(x).DownloadCount += 1
 
-                    FilenameByDateTableIndex += 1
+                                                                          FileNameByDateTable(x).DataTransferred = LogEntry.DataTransferred
 
-                    Exit For
+                                                                          FilenameByDateTableIndex += 1
 
-                End If
+                                                                      End SyncLock
 
-                If (FileNameByDateTable(x).FileName = LogEntry.Filename) AndAlso (FileNameByDateTable(x).DownloadDate = MatchingDate) Then
+                                                                      Exit For
 
-                    If (LogEntry.Action = GetOrCheck.GetFile) AndAlso (LogEntry.ReturnCode = 200) Then FileNameByDateTable(x).DownloadCount += 1
+                                                                  End If
 
-                    FileNameByDateTable(x).DataTransferred += LogEntry.DataTransferred
+                                                                  If (FileNameByDateTable(x).FileName = LogEntry.Filename) AndAlso (FileNameByDateTable(x).DownloadDate = MatchingDate) Then
 
-                    Exit For
+                                                                      If (LogEntry.Action = GetOrCheck.GetFile) AndAlso (LogEntry.ReturnCode = 200) Then
+                                                                          SyncLock (FileNameByDateTable)
+                                                                              FileNameByDateTable(x).DownloadCount += 1
+                                                                          End SyncLock
+                                                                      End If
 
-                End If
+                                                                      SyncLock (FileNameByDateTable)
+                                                                          FileNameByDateTable(x).DataTransferred += LogEntry.DataTransferred
+                                                                      End SyncLock
 
-            Next
+                                                                      Exit For
 
-            If FilenameByDateTableIndex = FilenameByDateTableMaxSize Then
-                FilenameByDateTableMaxSize += FilenameByDateTableIncrement
-                ReDim Preserve FileNameByDateTable(FilenameByDateTableMaxSize)
-            End If
+                                                                  End If
 
-        Next
+                                                              Next
+
+                                                              If FilenameByDateTableIndex = FilenameByDateTableMaxSize Then
+
+                                                                  SyncLock (FileNameByDateTable)
+                                                                      FilenameByDateTableMaxSize += FilenameByDateTableIncrement
+                                                                      ReDim Preserve FileNameByDateTable(FilenameByDateTableMaxSize)
+                                                                  End SyncLock
+
+                                                              End If
+
+                                                          End Sub)
 
         If FileNameByDateTable(FilenameByDateTableIndex).FileName = String.Empty Then FilenameByDateTableIndex -= 1
+
         ReDim Preserve FileNameByDateTable(FilenameByDateTableIndex)
 
         If gEquatePartialDownloads Then AddEquivalentCompletedDownloadsToFilenameByDateTable()
 
     End Sub
-
     Private Sub AddEquivalentCompletedDownloadsToFilenameByDateTable()
 
         Dim TimeDifference As Integer = 0
@@ -2010,29 +2020,32 @@ Public Class frmMain
         ReDim ReferrerTable(LogTable.Count)
 
         Dim ReferrerTableIndex As Integer = 0
-        Dim x As Integer = 0
 
-        For Each entry In LogTable
+        System.Threading.Tasks.Parallel.ForEach(LogTable, Sub(Entry As LogContent)
 
-            If (entry.ReturnCode = 200) AndAlso (entry.Action = GetOrCheck.GetFile) Then
+                                                              If (Entry.ReturnCode = 200) AndAlso (Entry.Action = GetOrCheck.GetFile) Then
 
-                If (entry.ReferingPage.Length > 0) Then
+                                                                  If (Entry.ReferingPage.Length > 0) Then
 
-                    x = Array.FindIndex(ReferrerTable, Function(c) c.ReferingPage = entry.ReferingPage)
+                                                                      SyncLock (ReferrerTable)
 
-                    If x = -1 Then
-                        ReferrerTable(ReferrerTableIndex).ReferingPage = entry.ReferingPage
-                        ReferrerTable(ReferrerTableIndex).Count = 1
-                        ReferrerTableIndex += 1
-                    Else
-                        ReferrerTable(x).Count += 1
-                    End If
+                                                                          Dim x As Integer = Array.FindIndex(ReferrerTable, Function(c) c.ReferingPage = Entry.ReferingPage)
 
-                End If
+                                                                          If x = -1 Then
+                                                                              ReferrerTable(ReferrerTableIndex).ReferingPage = Entry.ReferingPage
+                                                                              ReferrerTable(ReferrerTableIndex).Count = 1
+                                                                              ReferrerTableIndex += 1
+                                                                          Else
+                                                                              ReferrerTable(x).Count += 1
+                                                                          End If
 
-            End If
+                                                                      End SyncLock
 
-        Next
+                                                                  End If
+
+                                                              End If
+
+                                                          End Sub)
 
         ReDim Preserve ReferrerTable(ReferrerTableIndex - 1)
 
@@ -2046,7 +2059,7 @@ Public Class frmMain
 
         Dim IPTableIndex As Integer = 0
 
-        System.Threading.Tasks.Parallel.ForEach(LogTable, Sub(Entry)
+        System.Threading.Tasks.Parallel.ForEach(LogTable, Sub(Entry As LogContent)
 
                                                               If (Entry.ReturnCode = 200) AndAlso (Entry.Action = GetOrCheck.GetFile) Then
 
