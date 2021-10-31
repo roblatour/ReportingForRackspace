@@ -1408,7 +1408,7 @@ Public Class frmMain
         End Select
 
         StartDate = StartDate.Date
-        EndDate = EndDate.Date
+        EndDate = EndDate.Date.AddDays(1).AddSeconds(-1) ' v1.6 corrected end date calculation
 
     End Sub
 
