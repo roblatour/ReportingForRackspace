@@ -1,4 +1,4 @@
-﻿'Copyright 2021, Rob Latour
+﻿'Copyright 2022, Rob Latour
 
 ' For best performance
 ' Compile options - uncheck Prefer 32 bit
@@ -1877,9 +1877,13 @@ Public Class frmMain
 
         For Each entry In Top10Countries
 
-            Top10Entry.Country = (From c In CountryCodeTable Where c.CountryCode = entry.Country).Single.FullNameOfCountry
-            Top10Entry.TotalDownloads = entry.TotalDownloads
-            Top10CountriesTemp.Add(Top10Entry)
+            If entry.Country = String.Empty Then
+            Else
+                Top10Entry.Country = (From c In CountryCodeTable Where c.CountryCode = entry.Country).Single.FullNameOfCountry
+                Top10Entry.TotalDownloads = entry.TotalDownloads
+                Top10CountriesTemp.Add(Top10Entry)
+            End If
+
 
         Next
 
