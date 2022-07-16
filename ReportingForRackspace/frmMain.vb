@@ -1673,7 +1673,7 @@ Public Class frmMain
 
         Dim TimeDifference As Integer = 0
         Dim CombineFlag As Boolean = False
-        Dim RunningTotal As Integer = 0
+        Dim RunningTotal As Long = 0
 
         ' Create a list combining all partial downloads based on which IP address downloaded them and when
 
@@ -1921,14 +1921,14 @@ Public Class frmMain
 
         Dim CalculatedDownLoadListForTop10Countries As New List(Of CalculatedDownLoadListForTop10Countries)
 
-        Dim EquivalentDownloadCount As Integer = 0
+        Dim EquivalentDownloadCount As Long = 0
 
         Try
 
             Dim TimeDifference As Integer = 0
             Dim CombineFlag As Boolean = False
             Dim NewEntry As New CalculatedDownLoadListForTop10Countries
-            Dim RunningTotal As Integer = 0
+            Dim RunningTotal As Long = 0
 
             CalculatedDownLoadListForTop10Countries.Clear()
 
