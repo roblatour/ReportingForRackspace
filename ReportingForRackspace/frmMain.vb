@@ -1130,11 +1130,11 @@ Public Class frmMain
                 If My.Computer.FileSystem.FileExists(BackupFilename) Then
                     My.Computer.FileSystem.DeleteFile(OriginalfileName)
                     My.Computer.FileSystem.RenameFile(BackupFilename, cCombineFileName)
-                    My.Computer.FileSystem.DeleteFile(BackupFilename)
                 End If
             End If
 
-            Call MsgBox("Problem with combine")
+            Beep()
+            Call MsgBox("Problem with combine" & vbCrLf & ex.ToString)
 
         End Try
 
@@ -2609,10 +2609,12 @@ Public Class frmMain
             TextToAdd.Append("\pard\qc IP Addresses  \par")
             TextToAdd.Append("\pard\qc (none)     \par")
             TextToAdd.Append("}")
+
         Else
 
             TextToAdd.Append("{\rtf1\ansi")
-            TextToAdd.Append("\pard\qc IP Addresses  \par")
+            TextToAdd.Append("\pard\qc IP Addresses \par")
+            TextToAdd.Append("\pard\qc (Total Unique $$$) \par")
             TextToAdd.Append("\pard    \par")
             TextToAdd.Append("\pard           Visits" & vbTab & "IP Addresses\par")
 
@@ -2639,6 +2641,8 @@ Public Class frmMain
             TextToAdd.Append("\pard  " & padding & vbTab & vbTab & "\super (*)\nosupersub  " & IPTable.Count.ToString("N0") & " are unique \par")
             TextToAdd.Append("\pard    \par")
             TextToAdd.Append("}")
+
+            TextToAdd.Replace("$$$", IPTable.Count.ToString("N0"))
 
         End If
 
