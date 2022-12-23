@@ -15,34 +15,44 @@ Imports System.Text
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports net.openstack.Core.Domain
 Imports net.openstack.Providers.Rackspace
+Imports Npgsql
 
 Public Class frmMain
 
 #Region "Constants and Variables"
 
-    Const cThresholdSecondsForACombine As Integer = 300
+    ' Reporting for Rackspace assume a PostgresQL database loaded with the lite (free) version of MaxMind GEOIP data
+    ' ref: https://www.postgresql.org/
+    ' ref: https://dev.maxmind.com/geoip?lang=en
+    ' ref: https://dev.maxmind.com/geoip/importing-databases?lang=en
 
-    Private gRackSpaceUsername As String = String.Empty
-    Private gRackSpaceAPIKey = String.Empty
+    ' the pre compile version of available on GitHub assumes the following valuescompiled values
+    ' future enhancement may be to add them to the settings screen
+
+    Const MaxMindHost As String = "localhost"
+    Const MaxMindDatabaseName As String = "MaxMind"
+    Const MaxMindDatabaseUserID As String = "postgres"
+    Const MaxMindDatabasePassword As String = "MaxMind"
+
+    ' ***********************************************************************************************************************
+
+    ' Work in progress global constants and variables
+
+    Const gCurrentVersionURL As String = "https://www.rlatour.com/r4r/version/currentversion.txt"
+
+    Const cThresholdSecondsForACombine As Integer = 300
 
     Const cCombineFileName As String = "Combined.txt"
     Const cMasterFileOfDownloadedFilesFileName As String = "Master.txt"
+
+    Private gRackSpaceUsername As String = String.Empty
+    Private gRackSpaceAPIKey = String.Empty
 
     Private gDownloadFolder As String = String.Empty
     Private gDeCompressedFolder As String = String.Empty
     Private gCombinedFolder As String = String.Empty
     Private gIPv4Folder As String = String.Empty
     Private gIPv6Folder As String = String.Empty
-
-    ' ref: http://software77.net/geo-ip/
-
-    Const gIPv4URL As String = "http://software77.net/geo-ip/?DL=1"
-    Const gIPv6URL As String = "http://software77.net/geo-ip/?DL=7"
-
-    Const gIPv4FileName As String = "IpToCountry.csv"
-    Const gIPv6FileName As String = "IpToCountry.6R.csv"
-
-    Const gCurrentVersionURL As String = "https://www.rlatour.com/r4r/version/currentversion.txt"
 
     Private gIncludeExcludeFlag As String = String.Empty
     Private gFilesToInclude As String = String.Empty
@@ -273,6 +283,8 @@ Public Class frmMain
 
         modSecurity.EncryptDecryptClass.MakePassPhraseUniqueToThisPC()
 
+        SetupConnectionToMaxMindDatabase()
+
         If Microsoft.VisualBasic.Command.ToString.Trim.ToUpper.Contains("SILENT") Then
 
             ' update datafiles and shutdown
@@ -367,7 +379,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub MainDriver(ByVal DownloadFiles As Boolean, ByVal AutoShutdown As Boolean)
+    Private Async Sub MainDriver(ByVal DownloadFiles As Boolean, ByVal AutoShutdown As Boolean)
 
         Initialize()
 
@@ -407,7 +419,6 @@ Public Class frmMain
 
             SetSettingsVersion()
             SetWorkingFolders()
-            LoadIPvFolders()
 
             DoOnce = False
 
@@ -525,215 +536,86 @@ Public Class frmMain
 
 #End Region
 
-#Region "Load IP and Country data"
+#Region "Get country data from MaxMind PostgresSQL database base"
 
-    Private Sub LoadIPvFolders()
+    Private conn As NpgsqlConnection
 
-        UpdateIPv4AndIPv6DataFilesAsNeeded()
+    Private Async Sub SetupConnectionToMaxMindDatabase()
 
-        LoadIPv4Table()
-        LoadIPv6Table()
+        Dim connString As String = "Host=" & MaxMindHost & ";Database=" & MaxMindDatabaseName & ";Username=" & MaxMindDatabaseUserID & ";Password=" & MaxMindDatabasePassword & ";"
 
-    End Sub
+        conn = New NpgsqlConnection(connString)
 
-    Private Sub UpdateIPv4AndIPv6DataFilesAsNeeded()
-
-        If My.Settings.NextTimeIPvDataCanBeDownloaded > Now Then
-            Console.WriteLine("Please wait until " & My.Settings.NextTimeIPvDataCanBeDownloaded.ToString & " to refresh the IP country databases")
-            Exit Sub
-        End If
-
-        Dim UpdateAttempted As Boolean = False
-
-        Dim IPv4FullFilename = gIPv4Folder & "\" & gIPv4FileName
-        If UpdateIsRequird(IPv4FullFilename) Then
-            UpdateAttempted = True
-            UpdateDatabaseFromWeb(gIPv4URL, IPv4FullFilename)
-        End If
-
-        Dim IPv6FullFilename = gIPv6Folder & "\" & gIPv6FileName
-        If UpdateIsRequird(IPv6FullFilename) Then
-            UpdateAttempted = True
-            UpdateDatabaseFromWeb(gIPv6URL, IPv6FullFilename)
-        End If
-
-        If UpdateAttempted Then
-            My.Settings.NextTimeIPvDataCanBeDownloaded = Now.AddHours(1)
-            My.Settings.Save()
-        End If
-
-    End Sub
-
-    Private Function UpdateIsRequird(ByVal filename As String) As Boolean
-
-        ' update is requred if file is not there or if it was created more than a month ago
-
-        Return (Not (File.Exists(filename)) OrElse (Now >= File.GetCreationTime(filename).AddMonths(1)))
-
-    End Function
-
-    Private Sub UpdateDatabaseFromWeb(ByVal gIPx4URL As String, ByVal IPvxFullFilename As String)
-
-        Dim IPvxFullDownloadedFilename = IPvxFullFilename & ".gz"
-        Dim IPv4FullTempFilename = IPvxFullFilename & ".tmp"
-
-        Try
-
-            If File.Exists(IPvxFullDownloadedFilename) Then File.Delete(IPvxFullDownloadedFilename)
-
-            My.Computer.Network.DownloadFile(gIPx4URL, IPvxFullDownloadedFilename)
-
-            Dim FileToDecompress As FileInfo = New FileInfo(IPvxFullDownloadedFilename)
-
-            Using OriginalFileStream As FileStream = FileToDecompress.OpenRead()
-
-                Using decompressedFileStream As FileStream = File.Create(IPv4FullTempFilename)
-                    Using decompressionStream As GZipStream = New GZipStream(OriginalFileStream, CompressionMode.Decompress)
-                        decompressionStream.CopyTo(decompressedFileStream)
-                    End Using
-                End Using
-
-            End Using
-
-            If File.Exists(IPv4FullTempFilename) Then
-
-                If File.Exists(IPvxFullFilename) Then File.Delete(IPvxFullFilename)
-
-                File.Copy(IPv4FullTempFilename, IPvxFullFilename)
-
-                File.Delete(IPv4FullTempFilename)
-
-                File.Delete(IPvxFullDownloadedFilename)
-
-            End If
-
-        Catch ex As Exception
-            Console.WriteLine(ex.ToString)
-        End Try
-
-    End Sub
-
-    Private Sub LoadIPv4Table()
-
-        Dim Details() As String
-
-        Dim IPv4Entry As IPv4TableContent
-        Dim CountryCodeTableEntry As CountryCodeTableContent
-
-        For Each line As String In System.IO.File.ReadAllText(gIPv4Folder & "\" & gIPv4FileName).Split(vbLf)
-
-            If (line.Length = 0) OrElse (line.StartsWith("#")) Then
-
-                ' skip
-
-            Else
-
-                Details = line.Split(",")
-
-                IPv4Entry.StartRange = Details(0).Replace("""", "")
-                IPv4Entry.EndRange = Details(1).Replace("""", "")
-                IPv4Entry.CountryCode = Details(4).Replace("""", "")
-                IPv4List.Add(IPv4Entry)
-
-                CountryCodeTableEntry.CountryCode = IPv4Entry.CountryCode
-                CountryCodeTableEntry.FullNameOfCountry = Details(6).Replace("""", "")
-                CountryCodeTable.Add(CountryCodeTableEntry)
-
-            End If
-
-        Next
-
-        IPv4List = IPv4List.OrderBy(Function(c) c.StartRange).ToList
-
-    End Sub
-
-    Private Sub LoadIPv6Table()
-
-        Dim Details() As String
-        Dim FurtherDetails() As String
-
-        Dim IPv6Entry As IPv6TableContent
-
-        For Each line As String In System.IO.File.ReadAllText(gIPv6Folder & "\" & gIPv6FileName).Split(vbLf)
-
-            If (line.Length = 0) OrElse (line.StartsWith("#")) Then
-
-                ' skip
-
-            Else
-
-                Details = line.Split(",")
-                FurtherDetails = Details(0).Split("-")
-
-                IPv6Entry.StartRange = FurtherDetails(0)
-                IPv6Entry.EndRange = FurtherDetails(1)
-
-                IPv6Entry.Country = Details(1)
-
-                IPv6List.Add(IPv6Entry)
-
-            End If
-
-        Next
-
-        IPv6List = IPv6List.OrderBy(Function(c) c.StartRange).ToList
+        Await conn.OpenAsync()
 
     End Sub
 
     Private Function GetCountry(IP As String) As String
 
+        Dim ReturnValue As String = ""
 
-        If IP.Contains(".") Then
+        Dim SQLQuery As String = "select registered_country_geoname_id from geoip2_network where network >> '" & IP & "';"
 
-            Dim SearchAddress As Long = GetNumericIP(IP)
+        Try
 
-            '(lots of testing went into this, it goal is to speed up the lookup)
+            Using cmd As New NpgsqlCommand(SQLQuery, conn)
 
-            'Narrow down a good starting point for looking thru the list
+                Using reader As NpgsqlDataReader = cmd.ExecuteReader()
 
-            Dim Decrement As Long = IPv4List.Count * 0.01
-            Dim StartPoint As Long = IPv4List.Count - Decrement
-            While SearchAddress < IPv4List(StartPoint).StartRange
-                StartPoint -= Decrement
-                If StartPoint < 1 Then StartPoint = 0 : Exit While
-            End While
+                    While reader.Read()
 
-            For x As Integer = StartPoint To IPv4List.Count - 1
+                        ReturnValue = reader.GetValue(0).ToString
 
-                If (SearchAddress <= IPv4List(x).EndRange) AndAlso (SearchAddress >= IPv4List(x).StartRange) Then
-                    Return IPv4List(x).CountryCode
-                End If
+                    End While
 
-            Next
+                End Using
 
-        Else
+            End Using
 
-            Dim Results As List(Of IPv6TableContent) = IPv6List.Where(Function(c) (IP >= c.StartRange And IP <= c.EndRange)).ToList
-            Return Results(Results.Count - 1).Country ' pick the last, most specific entry
+        Catch ex As Exception
 
-        End If
+            ReturnValue = "Unknown"
 
-        Return String.Empty
+        End Try
+
+        Return ReturnValue
 
     End Function
 
-    Private Function GetNumericIP(IP As String) As Long
+    Private Function GetReallCountryName(country_code As String) As String
 
-        Const x256 As Long = 256
-        Const x65536 As Long = 65536
-        Const x16777216 As Long = 16777216
+        Dim ReturnValue As String = ""
 
-        Dim sections() As String = Split(IP, ".")
+        Dim SQLQuery As String = "select country_name from geoip2_location where geoname_id = " & country_code & ";"
 
-        If sections.Count = 4 Then
-            Return CType(sections(0), Long) * x16777216 + CType(sections(1), Long) * x65536 + CType(sections(2), Long) * x256 + CType(sections(3), Long)
-        Else
-            Return 0
-        End If
+        Try
+
+            Using cmd As New NpgsqlCommand(SQLQuery, conn)
+
+                Using reader As NpgsqlDataReader = cmd.ExecuteReader()
+
+                    While reader.Read()
+
+                        ReturnValue = reader.GetValue(0).ToString
+
+                    End While
+
+                End Using
+
+            End Using
+
+        Catch ex As Exception
+
+            ReturnValue = "Unknown"
+
+        End Try
+
+        Return ReturnValue
 
     End Function
 
 #End Region
+
 
 #Region "Download and combine log files"
 
@@ -1022,7 +904,7 @@ Public Class frmMain
             Else
 
                 Using decompressedFileStream As FileStream = File.Create(newFileName)
-                    Using decompressionStream As GZipStream = New GZipStream(OriginalFileStream, CompressionMode.Decompress)
+                    Using decompressionStream = New GZipStream(OriginalFileStream, CompressionMode.Decompress)
                         decompressionStream.CopyTo(decompressedFileStream)
                     End Using
                 End Using
@@ -1066,11 +948,13 @@ Public Class frmMain
         Try
 
             If My.Computer.FileSystem.FileExists(BackupFilename) Then
+                Beep()
                 Call MsgBox("Found backup file, it should not exist - please investigate")
                 Application.Exit()
             End If
 
             If My.Computer.FileSystem.FileExists(NewFilename) Then
+                Beep()
                 Call MsgBox("Found new file name, it should not exist - please investigate")
                 Application.Exit()
             End If
@@ -1159,7 +1043,6 @@ Public Class frmMain
 
 
     End Sub
-
 
 #End Region
 
@@ -1412,7 +1295,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub TallyTableEntries()
+    Private Function TallyTableEntries() As Task
 
         If gEquatePartialDownloads Then
 
@@ -1439,8 +1322,7 @@ Public Class frmMain
         CreateRefererTable()
         CreateIPTable()
 
-
-    End Sub
+    End Function
     Private Sub CreateTotalReportTable()
 
         ReDim Preserve TotalReportTable(LogTableSize)
@@ -1758,7 +1640,7 @@ Public Class frmMain
     End Sub
 
 
-    Private Sub CreateTop10CountriesTable()
+    Private Async Function CreateTop10CountriesTable() As Task
 
 
         ' getting the Country Code from the IP address takes a long time
@@ -1783,21 +1665,37 @@ Public Class frmMain
 
         Dim IPCountriesTotalDownloads As New List(Of IPCountryTotalDownloadsContent)
 
-        System.Threading.Tasks.Parallel.For(0, UniqueIPAddresses.Count,
-                                            Sub(x)
+        'System.Threading.Tasks.Parallel.For(0, UniqueIPAddresses.Count,
+        '                                    Async Sub(x)
 
-                                                Dim IP As String = UniqueIPAddresses(x)
-                                                Dim IPCourntriesTotalDownloadsEntry As IPCountryTotalDownloadsContent
 
-                                                IPCourntriesTotalDownloadsEntry.IP = IP
-                                                IPCourntriesTotalDownloadsEntry.TotalDownloads = IPAddressesWithACompletedDownload.LastIndexOf(IP) - IPAddressesWithACompletedDownload.IndexOf(IP) + 1
-                                                IPCourntriesTotalDownloadsEntry.CountryCode = GetCountry(IP)
+        '                                        Dim IP As String = UniqueIPAddresses(x)
+        '                                        Dim IPCourntriesTotalDownloadsEntry As IPCountryTotalDownloadsContent
 
-                                                SyncLock (IPCountriesTotalDownloads)
-                                                    IPCountriesTotalDownloads.Add(IPCourntriesTotalDownloadsEntry)
-                                                End SyncLock
+        '                                        IPCourntriesTotalDownloadsEntry.IP = IP
+        '                                        IPCourntriesTotalDownloadsEntry.TotalDownloads = IPAddressesWithACompletedDownload.LastIndexOf(IP) - IPAddressesWithACompletedDownload.IndexOf(IP) + 1
+        '                                        'IPCourntriesTotalDownloadsEntry.CountryCode = GetCountry(IP)
+        '                                        IPCourntriesTotalDownloadsEntry.CountryCode = Await GetCountry(IP)
 
-                                            End Sub)
+
+        '                                        SyncLock (IPCountriesTotalDownloads)
+        '                                            IPCountriesTotalDownloads.Add(IPCourntriesTotalDownloadsEntry)
+        '                                        End SyncLock
+
+        '                                    End Sub)
+
+
+        For x = 0 To UniqueIPAddresses.Count - 1
+
+            Dim IP As String = UniqueIPAddresses(x)
+            Dim IPCourntriesTotalDownloadsEntry As IPCountryTotalDownloadsContent
+
+            IPCourntriesTotalDownloadsEntry.IP = IP
+            IPCourntriesTotalDownloadsEntry.TotalDownloads = IPAddressesWithACompletedDownload.LastIndexOf(IP) - IPAddressesWithACompletedDownload.IndexOf(IP) + 1
+            IPCourntriesTotalDownloadsEntry.CountryCode = GetCountry(IP)
+            IPCountriesTotalDownloads.Add(IPCourntriesTotalDownloadsEntry)
+
+        Next
 
         '***********************************************************************************************************
         ' create list of all countries
@@ -1806,7 +1704,7 @@ Public Class frmMain
 
         If IPCountriesTotalDownloads.Count = 0 Then
             Top10Countries.Clear()
-            Exit Sub
+            Exit Function
         End If
 
         Dim CountryTotalDownloads As New List(Of CountryTotalDownloadsContent)
@@ -1879,11 +1777,10 @@ Public Class frmMain
 
             If entry.Country = String.Empty Then
             Else
-                Top10Entry.Country = (From c In CountryCodeTable Where c.CountryCode = entry.Country).Single.FullNameOfCountry
+                Top10Entry.Country = GetReallCountryName(entry.Country) ' (From c In CountryCodeTable Where c.CountryCode = entry.Country).Single.FullNameOfCountry
                 Top10Entry.TotalDownloads = entry.TotalDownloads
                 Top10CountriesTemp.Add(Top10Entry)
             End If
-
 
         Next
 
@@ -1907,7 +1804,7 @@ Public Class frmMain
 
         If gEquatePartialDownloads Then AddEquivalentCompletedDownloadsToTop10Countries()
 
-    End Sub
+    End Function
 
     '************************************************************************************************************************************************************************************************************
 
@@ -1917,7 +1814,7 @@ Public Class frmMain
         Dim EqivalentDownloads As Integer
 
     End Structure
-    Private Sub AddEquivalentCompletedDownloadsToTop10Countries()
+    Private Async Sub AddEquivalentCompletedDownloadsToTop10Countries()
 
         Dim CalculatedDownLoadListForTop10Countries As New List(Of CalculatedDownLoadListForTop10Countries)
 
@@ -1945,7 +1842,9 @@ Public Class frmMain
 
                 Else
 
-                    NewEntry.CountryFullName = GetCountry(FilteredLogTable(x).IPAddress)
+                    Dim UniqueCountryNumber As String = GetCountry(FilteredLogTable(x).IPAddress)
+                    NewEntry.CountryFullName = GetReallCountryName(UniqueCountryNumber)
+
 
                     If CombineFlag Then
                         NewEntry.EqivalentDownloads = GetEquivalentDownloads(FilteredLogTable(x).Filename, FilteredLogTable(x).DataTransferred + RunningTotal)
@@ -1997,8 +1896,11 @@ Public Class frmMain
 
                 Else
 
-                    CountryCode = (From c In CountryCodeTable Where c.FullNameOfCountry = entry.Country).Single.CountryCode
-                    AdditionsForAParticularCountry = CalculatedDownLoadListForTop10Countries.Where(Function(c) c.CountryFullName = CountryCode).Count
+                    '  CountryCode = (From c In CountryCodeTable Where c.FullNameOfCountry = entry.Country).Single.CountryCode
+
+                    'CountryCode = 
+
+                    AdditionsForAParticularCountry = CalculatedDownLoadListForTop10Countries.Where(Function(c) c.CountryFullName = entry.Country).Count
 
                     entry.TotalDownloads += AdditionsForAParticularCountry
                     AdditionsForAllOtherCountries -= AdditionsForAParticularCountry
@@ -2056,6 +1958,22 @@ Public Class frmMain
         ReferrerTable = ReferrerTable.OrderByDescending(Function(c) c.Count).ThenBy(Function(c) c.ReferingPage).ToArray
 
     End Sub
+
+    Private Function GetNumericIP(IP As String) As Long
+
+        Const x256 As Long = 256
+        Const x65536 As Long = 65536
+        Const x16777216 As Long = 16777216
+
+        Dim sections() As String = Split(IP, ".")
+
+        If sections.Count = 4 Then
+            Return CType(sections(0), Long) * x16777216 + CType(sections(1), Long) * x65536 + CType(sections(2), Long) * x256 + CType(sections(3), Long)
+        Else
+            Return 0
+        End If
+
+    End Function
 
     Private Sub CreateIPTable()
 
@@ -2620,7 +2538,6 @@ Public Class frmMain
 
             Dim padding As String
 
-            Dim NoReferrals As Integer = 0
             Dim TotalDownloads As Integer = 0
 
             For Each entry In IPTable
@@ -2738,11 +2655,9 @@ Public Class frmMain
 
             gZoomName = sender.name
 
-            Dim mystream As System.IO.MemoryStream = New System.IO.MemoryStream()
+            Dim mystream = New System.IO.MemoryStream()
             sender.Serializer.Save(mystream)
             ChartZoom.Serializer.Load(mystream)
-
-            mystream = Nothing
 
             TableLayoutPanel1.Visible = False
 
@@ -2802,7 +2717,7 @@ Public Class frmMain
 
     Private Sub RestoreOriginalChartFromZoom()
 
-        Dim mystream As System.IO.MemoryStream = New System.IO.MemoryStream()
+        Dim mystream = New System.IO.MemoryStream()
 
         Select Case gZoomName
 
@@ -2824,8 +2739,6 @@ Public Class frmMain
         End Select
 
         ChartZoom.Serializer.Load(mystream)
-
-        mystream = Nothing
 
         ChartZoom.Size = TableLayoutPanel1.Size
 
@@ -2864,7 +2777,6 @@ Public Class frmMain
 
         Dim frmAbout As New frmAbout
         frmAbout.ShowDialog()
-        frmAbout = Nothing
 
     End Sub
 
@@ -2879,7 +2791,7 @@ Public Class frmMain
 
     Private Sub AddCopyFunctionToRichTextBoxReports()
 
-        Dim ContextMenu As ContextMenu = New System.Windows.Forms.ContextMenu()
+        Dim ContextMenu = New System.Windows.Forms.ContextMenu()
         Dim MenuItem As New MenuItem("&Copy")
 
         AddHandler(MenuItem.Click), AddressOf CopyAction
@@ -2928,8 +2840,6 @@ Public Class frmMain
         Cursor.Current = Cursors.WaitCursor
 
         CheckForUpdatesToolStripMenuItem.Enabled = False
-
-        Dim ReturnCode As String = String.Empty  'Return codes are: 'Yes', 'No', and 'Not Sure'
 
         Try
 
