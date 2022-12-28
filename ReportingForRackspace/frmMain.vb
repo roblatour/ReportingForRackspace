@@ -32,7 +32,7 @@ Public Class frmMain
     Const MaxMindHost As String = "localhost"
     Const MaxMindDatabaseName As String = "MaxMind"
     Const MaxMindDatabaseUserID As String = "postgres"
-    Const MaxMindDatabasePassword As String = "MaxMind"
+    Const MaxMindDatabasePassword As String = "MaxMind"  ' use "MaxMind" for general release
 
     ' ***********************************************************************************************************************
 
@@ -195,40 +195,6 @@ Public Class frmMain
     Private IPTable(0) As IPTableContent
 
     '************************************************************************************************************************************************************************************************************
-    Structure IPv4TableContent
-
-        Dim StartRange As Long
-        Dim EndRange As Long
-        Dim CountryCode As String
-
-        Sub New(ByVal _StartRange As Long, ByVal _EndRange As Long, ByVal _Country As String)
-            StartRange = _StartRange
-            EndRange = _EndRange
-            CountryCode = _Country
-        End Sub
-
-    End Structure
-
-    Dim IPv4List As New List(Of IPv4TableContent)
-
-    '************************************************************************************************************************************************************************************************************
-    Structure IPv6TableContent
-
-        Dim StartRange As String
-        Dim EndRange As String
-        Dim Country As String
-
-        Sub New(ByVal _StartRange As String, ByVal _EndRange As String, ByVal _Country As String)
-            StartRange = _StartRange
-            EndRange = _EndRange
-            Country = _Country
-        End Sub
-
-    End Structure
-
-    Dim IPv6List As New List(Of IPv6TableContent)
-
-    '************************************************************************************************************************************************************************************************************
     Structure CountryCodeTableContent
 
         Dim CountryCode As String
@@ -281,6 +247,11 @@ Public Class frmMain
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
 
+
+        Dim frmSplash = New frmSplash
+        frmSplash.Show()
+        frmSplash.BringToFront()
+
         modSecurity.EncryptDecryptClass.MakePassPhraseUniqueToThisPC()
 
         SetupConnectionToMaxMindDatabase()
@@ -318,6 +289,12 @@ Public Class frmMain
 
         End If
 
+        Try
+            frmSplash.Close()
+        Catch ex As Exception
+
+        End Try
+
     End Sub
 
     Private Sub frmMain_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
@@ -325,33 +302,6 @@ Public Class frmMain
         My.Settings.StartingSize = Me.Size
         My.Settings.StartingLocation = Me.Location
         My.Settings.Save()
-
-    End Sub
-    Private Sub SettingsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SettingsToolStripMenuItem.Click
-
-        Dim HoldRemoveDownloadedLogsFromCloud As Boolean = gDeleteDownloadedLogsFromCloud
-
-        Dim frmSettings As New frmSettings
-        frmSettings.ShowDialog()
-        frmSettings.Dispose()
-
-        If gSettingsClosedWithAnOK Then
-
-            LoadGlobalVariables()
-
-            MainDriver(False, False)
-
-            If gDeleteDownloadedLogsFromCloud Then
-
-                If HoldRemoveDownloadedLogsFromCloud Then
-                    ' files were already being deleted so don't worry about it
-                Else
-                    DeleteFilesFromServerThatHaveAlreadyBeenDownloaded()
-                End If
-
-            End If
-
-        End If
 
     End Sub
     Private Sub Exit_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
@@ -379,9 +329,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Async Sub MainDriver(ByVal DownloadFiles As Boolean, ByVal AutoShutdown As Boolean)
-
-        Initialize()
+    Private Sub MainDriver(ByVal DownloadFiles As Boolean, ByVal AutoShutdown As Boolean)
 
         If DownloadFiles Then
 
@@ -395,17 +343,67 @@ Public Class frmMain
 
         End If
 
-        If Not AutoShutdown Then
+        If AutoShutdown Then
+        Else
+            RunReports() ' these seems required, otherwise country pie graph doesn't generate with country names when reports are run after startup?? Not sure why
+        End If
 
-            CombineAllDecompressedFiles()
-            ProcessCombinedFile()
-            TallyTableEntries()
-            CreateGraphsAndReports()
-            RefreshStatusBar()
+    End Sub
+
+    Private Sub RunReports()
+
+        FileToolStripMenuItem.Enabled = False
+
+        Me.Cursor = Cursors.WaitCursor
+        Application.DoEvents()
+
+        ReLoadGlobalVariablesFromSettings()
+        Initialize()
+        CombineAllDecompressedFiles()
+        ProcessCombinedFile()
+        TallyTableEntries()
+        CreateGraphsAndReports()
+        RefreshStatusBar()
+
+        FileToolStripMenuItem.Enabled = True
+
+        Me.Cursor = Cursors.Default
+
+    End Sub
+
+    Private Sub ReportToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportToolStripMenuItem.Click
+
+        Application.DoEvents()
+        RunReports()
+
+    End Sub
+
+    Private Sub SettingsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SettingsToolStripMenuItem.Click
+
+        Dim HoldRemoveDownloadedLogsFromCloud As Boolean = gDeleteDownloadedLogsFromCloud
+
+        Dim frmSettings As New frmSettings
+        frmSettings.ShowDialog()
+        frmSettings.Dispose()
+
+        If gSettingsClosedWithAnOK Then
+
+            RunReports()
+
+            If gDeleteDownloadedLogsFromCloud Then
+
+                If HoldRemoveDownloadedLogsFromCloud Then
+                    ' files were already being deleted so don't worry about it
+                Else
+                    DeleteFilesFromServerThatHaveAlreadyBeenDownloaded()
+                End If
+
+            End If
 
         End If
 
     End Sub
+
 
 #Region "Initialize"
 
@@ -424,7 +422,7 @@ Public Class frmMain
 
         End If
 
-        LoadGlobalVariables()
+        ReLoadGlobalVariablesFromSettings()
 
         RefreshStatusBar()
 
@@ -445,7 +443,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub LoadGlobalVariables()
+    Private Sub ReLoadGlobalVariablesFromSettings()
 
         gRackSpaceUsername = My.Settings.UserID
         gRackSpaceAPIKey = My.Settings.APIKey
@@ -458,7 +456,6 @@ Public Class frmMain
         gIgnore400Requests = My.Settings.Ignore400Requests
         gShowHeaderChecks = My.Settings.ShowHeaderChecks
         gEquatePartialDownloads = My.Settings.EquatePartialDownloads
-
 
         gStartDate = My.Settings.StartDate
         gEndDate = My.Settings.EndDate
@@ -550,7 +547,47 @@ Public Class frmMain
 
     End Sub
 
+
+    Private KnownIPs = New List(Of String)
+    Private KnownIPsCountryCodes = New List(Of String)
+
+    Private KnownCountryCodes = New List(Of String)
+    Private KnownCountryNames = New List(Of String)
+
+    Function LookupKnownIPs(IP) As String
+
+        Dim index As Int64 = KnownIPs.indexof(IP)
+
+        If index >= 0 Then
+            Return KnownIPsCountryCodes(index)
+        Else
+            Return ""
+        End If
+
+    End Function
+
     Private Function GetCountry(IP As String) As String
+
+        If IP = "" Then Return ""
+
+        ' for performance reasons if the current IP being requested is the same as the last IP requested, return the same results as before
+        Static Dim LastIP As String = ""
+        Static Dim LastReturnValue As String = ""
+
+        If IP = LastIP Then
+            If LastReturnValue > "" Then
+                Return LastReturnValue
+            End If
+        End If
+        LastIP = IP
+
+        ' for performance reasons, look in a list of known IP values to see if this IP has already been retrieved from the database
+        'If it has Then Return the previousily stored results
+        Dim ExistingValue As String = LookupKnownIPs(IP)
+
+        If ExistingValue > "" Then
+            Return ExistingValue
+        End If
 
         Dim ReturnValue As String = ""
 
@@ -574,41 +611,72 @@ Public Class frmMain
 
         Catch ex As Exception
 
-            ReturnValue = "Unknown"
+            ReturnValue = "unknown"
 
         End Try
+
+        ' for performance reasons
+        ' add results to an in memory table of already retrieved IP addresses
+
+        'If IP > "" Then
+
+        '    KnownIPsCountryCodes.add(ReturnValue)
+        '    KnownIPs.add(IP)
+
+        'End If
+
+        LastReturnValue = ReturnValue
 
         Return ReturnValue
 
     End Function
 
-    Private Function GetReallCountryName(country_code As String) As String
+    Function LookupKnownCountryCodes(CountryCode) As String
+
+        Dim index As Int64 = KnownCountryCodes.indexof(CountryCode)
+
+        If index >= 0 Then
+            Return KnownCountryNames(index)
+        Else
+            Return ""
+        End If
+
+    End Function
+
+    Private Function GetRealCountryName(country_code As String) As String
+
+        If country_code = "" Then Return ""
+
+        ' try searching names that have already been retrieved from the database
+        Dim ExistingValue As String = LookupKnownCountryCodes(country_code)
+
+        If ExistingValue > "" Then Return ExistingValue
+
+        ' could not find a name that was already retrieved from the database
+        ' so query the databse to get the name 
 
         Dim ReturnValue As String = ""
 
         Dim SQLQuery As String = "select country_name from geoip2_location where geoname_id = " & country_code & ";"
 
-        Try
+        Using cmd As New NpgsqlCommand(SQLQuery, conn)
 
-            Using cmd As New NpgsqlCommand(SQLQuery, conn)
+            Using reader As NpgsqlDataReader = cmd.ExecuteReader()
 
-                Using reader As NpgsqlDataReader = cmd.ExecuteReader()
+                While reader.Read()
 
-                    While reader.Read()
+                    ReturnValue = reader.GetValue(0).ToString
 
-                        ReturnValue = reader.GetValue(0).ToString
-
-                    End While
-
-                End Using
+                End While
 
             End Using
 
-        Catch ex As Exception
+        End Using
 
-            ReturnValue = "Unknown"
+        KnownCountryCodes.add(country_code)
+        KnownCountryNames.add(ReturnValue)
 
-        End Try
+        Console.WriteLine(ReturnValue)
 
         Return ReturnValue
 
@@ -1777,7 +1845,7 @@ Public Class frmMain
 
             If entry.Country = String.Empty Then
             Else
-                Top10Entry.Country = GetReallCountryName(entry.Country) ' (From c In CountryCodeTable Where c.CountryCode = entry.Country).Single.FullNameOfCountry
+                Top10Entry.Country = GetRealCountryName(entry.Country) ' (From c In CountryCodeTable Where c.CountryCode = entry.Country).Single.FullNameOfCountry
                 Top10Entry.TotalDownloads = entry.TotalDownloads
                 Top10CountriesTemp.Add(Top10Entry)
             End If
@@ -1843,7 +1911,7 @@ Public Class frmMain
                 Else
 
                     Dim UniqueCountryNumber As String = GetCountry(FilteredLogTable(x).IPAddress)
-                    NewEntry.CountryFullName = GetReallCountryName(UniqueCountryNumber)
+                    NewEntry.CountryFullName = GetRealCountryName(UniqueCountryNumber)
 
 
                     If CombineFlag Then
@@ -1857,6 +1925,8 @@ Public Class frmMain
                     If NewEntry.EqivalentDownloads > 0 Then CalculatedDownLoadListForTop10Countries.Add(NewEntry)
 
                 End If
+
+                Application.DoEvents()
 
             Next
 
@@ -1895,10 +1965,6 @@ Public Class frmMain
                     ReplacementList.Add(entry)
 
                 Else
-
-                    '  CountryCode = (From c In CountryCodeTable Where c.FullNameOfCountry = entry.Country).Single.CountryCode
-
-                    'CountryCode = 
 
                     AdditionsForAParticularCountry = CalculatedDownLoadListForTop10Countries.Where(Function(c) c.CountryFullName = entry.Country).Count
 
@@ -2088,7 +2154,6 @@ Public Class frmMain
 
     End Function
 
-
     Private Sub CreateGraphsAndReports()
 
         CreateChartOfDownloadsByDate()
@@ -2106,7 +2171,6 @@ Public Class frmMain
                 RestoreOriginalRPTPanelFromZoom()
             End If
         End If
-
 
     End Sub
 
@@ -2400,6 +2464,7 @@ Public Class frmMain
         End With
 
     End Sub
+
     Private Sub CreateChartOfCompletedDownloadsByCountry()
 
         'Set look of Graph *******************************************************************************************************************
@@ -2411,16 +2476,19 @@ Public Class frmMain
 
             .DataManipulator.Sort(PointSortOrder.Descending, .Series(0))
 
-            .Series(0)("PieLabelStyle") = "Disabled"
-
-            .Series(0).LegendText = "#VALX (#PERCENT{P1})"
             ' also see Sub ChartOfDataTransferred_CustomizeLegend below - which removes the space before the percent sign in the legend
+
+            .Legends.Clear()             ' testing here
+            .Legends.Add(New Legend)
+            .Legends(0).Position.Auto = True
 
             .Legends(0).TextWrapThreshold = 200
             .Legends(0).Enabled = True
             .Legends(0).Docking = Docking.Right
             .Legends(0).Alignment = System.Drawing.StringAlignment.Center
 
+            .Series(0)("PieLabelStyle") = "Outside" ' "Disabled"
+            .Series(0).LegendText = "#VALX (#PERCENT{P1})"
             .Series(0).BorderWidth = 1
             .Series(0).BorderColor = System.Drawing.Color.FromArgb(26, 59, 105)
 
