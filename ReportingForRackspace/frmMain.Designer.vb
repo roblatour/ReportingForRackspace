@@ -22,29 +22,29 @@ Partial Class frmMain
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim ChartArea2 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim Series3 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim Series4 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim Title1 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
-        Dim ChartArea3 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series5 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim Title2 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
-        Dim ChartArea4 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend4 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Title3 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
-        Dim ChartArea5 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend5 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Title4 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
-        Dim ChartArea6 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend6 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series6 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim Title5 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
+        Dim ChartArea7 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend7 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series7 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea8 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend8 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series8 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim Series9 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim Series10 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim Title6 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
+        Dim ChartArea9 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend9 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series11 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim Title7 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
+        Dim ChartArea10 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend10 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Title8 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
+        Dim ChartArea11 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend11 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Title9 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
+        Dim ChartArea12 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend12 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series12 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim Title10 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
         Me.StatusStrip = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ChartZoom = New System.Windows.Forms.DataVisualization.Charting.Chart()
@@ -64,13 +64,15 @@ Partial Class frmMain
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripSeparator()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.OnlineHelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.WebsiteToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OnlineHelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem4 = New System.Windows.Forms.ToolStripSeparator()
         Me.CheckForUpdatesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MainMenu = New System.Windows.Forms.MenuStrip()
+        Me.ReportToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.StatusStrip.SuspendLayout()
         CType(Me.ChartZoom, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ChartOfDownloadsByFileName, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -105,152 +107,152 @@ Partial Class frmMain
         '
         'ChartZoom
         '
-        ChartArea1.Name = "ChartArea1"
-        Me.ChartZoom.ChartAreas.Add(ChartArea1)
-        Legend1.Name = "Legend1"
-        Me.ChartZoom.Legends.Add(Legend1)
+        ChartArea7.Name = "ChartArea1"
+        Me.ChartZoom.ChartAreas.Add(ChartArea7)
+        Legend7.Name = "Legend1"
+        Me.ChartZoom.Legends.Add(Legend7)
         Me.ChartZoom.Location = New System.Drawing.Point(269, 597)
         Me.ChartZoom.Name = "ChartZoom"
-        Series1.ChartArea = "ChartArea1"
-        Series1.Legend = "Legend1"
-        Series1.Name = "Series1"
-        Me.ChartZoom.Series.Add(Series1)
+        Series7.ChartArea = "ChartArea1"
+        Series7.Legend = "Legend1"
+        Series7.Name = "Series1"
+        Me.ChartZoom.Series.Add(Series7)
         Me.ChartZoom.Size = New System.Drawing.Size(270, 364)
         Me.ChartZoom.TabIndex = 12
         Me.ChartZoom.Text = "Chart1"
         Me.ChartZoom.Visible = False
         '
-        'ChartOfDownloadsByType
+        'ChartOfDownloadsByFileName
         '
         Me.ChartOfDownloadsByFileName.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        ChartArea2.Name = "ChartArea1"
-        Me.ChartOfDownloadsByFileName.ChartAreas.Add(ChartArea2)
-        Legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
-        Legend2.Name = "Legend1"
-        Me.ChartOfDownloadsByFileName.Legends.Add(Legend2)
+        ChartArea8.Name = "ChartArea1"
+        Me.ChartOfDownloadsByFileName.ChartAreas.Add(ChartArea8)
+        Legend8.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
+        Legend8.Name = "Legend1"
+        Me.ChartOfDownloadsByFileName.Legends.Add(Legend8)
         Me.ChartOfDownloadsByFileName.Location = New System.Drawing.Point(420, 267)
-        Me.ChartOfDownloadsByFileName.Name = "ChartOfDownloadsByType"
+        Me.ChartOfDownloadsByFileName.Name = "ChartOfDownloadsByFileName"
         Me.ChartOfDownloadsByFileName.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None
-        Series2.ChartArea = "ChartArea1"
-        Series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Bar
-        Series2.Legend = "Legend1"
-        Series2.Name = "Completed Downloads"
-        Series3.ChartArea = "ChartArea1"
-        Series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Bar
-        Series3.Legend = "Legend1"
-        Series3.Name = "Partial Downloads"
-        Series4.ChartArea = "ChartArea1"
-        Series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Bar
-        Series4.Legend = "Legend1"
-        Series4.Name = "Header checks"
-        Me.ChartOfDownloadsByFileName.Series.Add(Series2)
-        Me.ChartOfDownloadsByFileName.Series.Add(Series3)
-        Me.ChartOfDownloadsByFileName.Series.Add(Series4)
+        Series8.ChartArea = "ChartArea1"
+        Series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Bar
+        Series8.Legend = "Legend1"
+        Series8.Name = "Completed Downloads"
+        Series9.ChartArea = "ChartArea1"
+        Series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Bar
+        Series9.Legend = "Legend1"
+        Series9.Name = "Partial Downloads"
+        Series10.ChartArea = "ChartArea1"
+        Series10.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Bar
+        Series10.Legend = "Legend1"
+        Series10.Name = "Header checks"
+        Me.ChartOfDownloadsByFileName.Series.Add(Series8)
+        Me.ChartOfDownloadsByFileName.Series.Add(Series9)
+        Me.ChartOfDownloadsByFileName.Series.Add(Series10)
         Me.ChartOfDownloadsByFileName.Size = New System.Drawing.Size(411, 126)
         Me.ChartOfDownloadsByFileName.TabIndex = 3
         Me.ChartOfDownloadsByFileName.Text = "Chart1"
-        Title1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Title1.Name = "Title1"
-        Title1.Text = "Logged activities"
-        Me.ChartOfDownloadsByFileName.Titles.Add(Title1)
+        Title6.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Title6.Name = "Title1"
+        Title6.Text = "Logged activities"
+        Me.ChartOfDownloadsByFileName.Titles.Add(Title6)
         '
         'ChartOfCompletedDownloadsByCountry
         '
         Me.ChartOfCompletedDownloadsByCountry.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        ChartArea3.Name = "ChartArea1"
-        Me.ChartOfCompletedDownloadsByCountry.ChartAreas.Add(ChartArea3)
-        Legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
-        Legend3.Name = "Legend1"
-        Legend3.TextWrapThreshold = 30
-        Me.ChartOfCompletedDownloadsByCountry.Legends.Add(Legend3)
+        ChartArea9.Name = "ChartArea1"
+        Me.ChartOfCompletedDownloadsByCountry.ChartAreas.Add(ChartArea9)
+        Legend9.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
+        Legend9.Name = "Legend1"
+        Legend9.TextWrapThreshold = 30
+        Me.ChartOfCompletedDownloadsByCountry.Legends.Add(Legend9)
         Me.ChartOfCompletedDownloadsByCountry.Location = New System.Drawing.Point(420, 3)
         Me.ChartOfCompletedDownloadsByCountry.Name = "ChartOfCompletedDownloadsByCountry"
         Me.ChartOfCompletedDownloadsByCountry.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None
-        Series5.ChartArea = "ChartArea1"
-        Series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie
-        Series5.Legend = "Legend1"
-        Series5.Name = "Data transferred (GBs)"
-        Me.ChartOfCompletedDownloadsByCountry.Series.Add(Series5)
+        Series11.ChartArea = "ChartArea1"
+        Series11.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie
+        Series11.Legend = "Legend1"
+        Series11.Name = "Data transferred (GBs)"
+        Me.ChartOfCompletedDownloadsByCountry.Series.Add(Series11)
         Me.ChartOfCompletedDownloadsByCountry.Size = New System.Drawing.Size(411, 126)
         Me.ChartOfCompletedDownloadsByCountry.TabIndex = 4
         Me.ChartOfCompletedDownloadsByCountry.Text = "Chart2"
-        Title2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Title2.Name = "Title1"
-        Title2.Text = "Completed Downloads by Country"
-        Me.ChartOfCompletedDownloadsByCountry.Titles.Add(Title2)
+        Title7.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Title7.Name = "Title1"
+        Title7.Text = "Completed Downloads by Country"
+        Me.ChartOfCompletedDownloadsByCountry.Titles.Add(Title7)
         '
         'ChartOfDownloadsByDate
         '
         Me.ChartOfDownloadsByDate.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        ChartArea4.Name = "ChartArea1"
-        Me.ChartOfDownloadsByDate.ChartAreas.Add(ChartArea4)
-        Legend4.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
-        Legend4.Name = "Legend1"
-        Me.ChartOfDownloadsByDate.Legends.Add(Legend4)
+        ChartArea10.Name = "ChartArea1"
+        Me.ChartOfDownloadsByDate.ChartAreas.Add(ChartArea10)
+        Legend10.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
+        Legend10.Name = "Legend1"
+        Me.ChartOfDownloadsByDate.Legends.Add(Legend10)
         Me.ChartOfDownloadsByDate.Location = New System.Drawing.Point(3, 3)
         Me.ChartOfDownloadsByDate.Name = "ChartOfDownloadsByDate"
         Me.ChartOfDownloadsByDate.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None
         Me.ChartOfDownloadsByDate.Size = New System.Drawing.Size(411, 126)
         Me.ChartOfDownloadsByDate.TabIndex = 1
         Me.ChartOfDownloadsByDate.Text = "Chart1"
-        Title3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Title3.Name = "Title1"
-        Title3.Text = "Completed downloads by date"
-        Me.ChartOfDownloadsByDate.Titles.Add(Title3)
+        Title8.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Title8.Name = "Title1"
+        Title8.Text = "Completed downloads by date"
+        Me.ChartOfDownloadsByDate.Titles.Add(Title8)
         '
         'ChartOfDataTransferredByDate
         '
         Me.ChartOfDataTransferredByDate.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        ChartArea5.Name = "ChartArea1"
-        Me.ChartOfDataTransferredByDate.ChartAreas.Add(ChartArea5)
-        Legend5.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
-        Legend5.Name = "Legend1"
-        Me.ChartOfDataTransferredByDate.Legends.Add(Legend5)
+        ChartArea11.Name = "ChartArea1"
+        Me.ChartOfDataTransferredByDate.ChartAreas.Add(ChartArea11)
+        Legend11.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
+        Legend11.Name = "Legend1"
+        Me.ChartOfDataTransferredByDate.Legends.Add(Legend11)
         Me.ChartOfDataTransferredByDate.Location = New System.Drawing.Point(3, 135)
         Me.ChartOfDataTransferredByDate.Name = "ChartOfDataTransferredByDate"
         Me.ChartOfDataTransferredByDate.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None
         Me.ChartOfDataTransferredByDate.Size = New System.Drawing.Size(411, 126)
         Me.ChartOfDataTransferredByDate.TabIndex = 2
         Me.ChartOfDataTransferredByDate.Text = "Chart1"
-        Title4.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Title4.Name = "Title1"
-        Title4.Text = "Data transfered by date"
-        Me.ChartOfDataTransferredByDate.Titles.Add(Title4)
+        Title9.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Title9.Name = "Title1"
+        Title9.Text = "Data transfered by date"
+        Me.ChartOfDataTransferredByDate.Titles.Add(Title9)
         '
         'ChartOfDataTransferred
         '
         Me.ChartOfDataTransferred.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        ChartArea6.Name = "ChartArea1"
-        Me.ChartOfDataTransferred.ChartAreas.Add(ChartArea6)
-        Legend6.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
-        Legend6.Name = "Legend1"
-        Legend6.TextWrapThreshold = 30
-        Me.ChartOfDataTransferred.Legends.Add(Legend6)
+        ChartArea12.Name = "ChartArea1"
+        Me.ChartOfDataTransferred.ChartAreas.Add(ChartArea12)
+        Legend12.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom
+        Legend12.Name = "Legend1"
+        Legend12.TextWrapThreshold = 30
+        Me.ChartOfDataTransferred.Legends.Add(Legend12)
         Me.ChartOfDataTransferred.Location = New System.Drawing.Point(420, 135)
         Me.ChartOfDataTransferred.Name = "ChartOfDataTransferred"
         Me.ChartOfDataTransferred.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None
-        Series6.ChartArea = "ChartArea1"
-        Series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie
-        Series6.Legend = "Legend1"
-        Series6.Name = "Data transferred (GBs)"
-        Me.ChartOfDataTransferred.Series.Add(Series6)
+        Series12.ChartArea = "ChartArea1"
+        Series12.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie
+        Series12.Legend = "Legend1"
+        Series12.Name = "Data transferred (GBs)"
+        Me.ChartOfDataTransferred.Series.Add(Series12)
         Me.ChartOfDataTransferred.Size = New System.Drawing.Size(411, 126)
         Me.ChartOfDataTransferred.TabIndex = 3
         Me.ChartOfDataTransferred.Text = "Chart2"
-        Title5.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Title5.Name = "Title1"
-        Title5.Text = "Data transferred"
-        Me.ChartOfDataTransferred.Titles.Add(Title5)
+        Title10.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Title10.Name = "Title1"
+        Title10.Text = "Data transferred"
+        Me.ChartOfDataTransferred.Titles.Add(Title10)
         '
         'TableLayoutPanel1
         '
@@ -324,7 +326,7 @@ Partial Class frmMain
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SettingsToolStripMenuItem, Me.ToolStripMenuItem2, Me.RefreshToolStripMenuItem, Me.ToolStripMenuItem1, Me.ExitToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SettingsToolStripMenuItem, Me.ToolStripMenuItem2, Me.ReportToolStripMenuItem, Me.ToolStripSeparator2, Me.RefreshToolStripMenuItem, Me.ToolStripMenuItem1, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "&File"
@@ -333,31 +335,31 @@ Partial Class frmMain
         '
         Me.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem"
         Me.SettingsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2
-        Me.SettingsToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.SettingsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.SettingsToolStripMenuItem.Text = "Settings"
         '
         'ToolStripMenuItem2
         '
         Me.ToolStripMenuItem2.Name = "ToolStripMenuItem2"
-        Me.ToolStripMenuItem2.Size = New System.Drawing.Size(132, 6)
+        Me.ToolStripMenuItem2.Size = New System.Drawing.Size(177, 6)
         '
         'RefreshToolStripMenuItem
         '
         Me.RefreshToolStripMenuItem.Name = "RefreshToolStripMenuItem"
         Me.RefreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5
-        Me.RefreshToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
-        Me.RefreshToolStripMenuItem.Text = "&Refresh"
+        Me.RefreshToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.RefreshToolStripMenuItem.Text = "Re&fresh"
         '
         'ToolStripMenuItem1
         '
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(132, 6)
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(177, 6)
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
         Me.ExitToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F12
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.ExitToolStripMenuItem.Text = "&Exit"
         '
         'HelpToolStripMenuItem
@@ -367,6 +369,13 @@ Partial Class frmMain
         Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(44, 20)
         Me.HelpToolStripMenuItem.Text = "&Help"
         '
+        'WebsiteToolStripMenuItem
+        '
+        Me.WebsiteToolStripMenuItem.Name = "WebsiteToolStripMenuItem"
+        Me.WebsiteToolStripMenuItem.Size = New System.Drawing.Size(175, 22)
+        Me.WebsiteToolStripMenuItem.Tag = "http://www.rlatour.com/r4r/index.html"
+        Me.WebsiteToolStripMenuItem.Text = "&Website main page"
+        '
         'OnlineHelpToolStripMenuItem
         '
         Me.OnlineHelpToolStripMenuItem.Name = "OnlineHelpToolStripMenuItem"
@@ -374,13 +383,6 @@ Partial Class frmMain
         Me.OnlineHelpToolStripMenuItem.Size = New System.Drawing.Size(175, 22)
         Me.OnlineHelpToolStripMenuItem.Tag = "http://www.rlatour.com/r4r/help.html"
         Me.OnlineHelpToolStripMenuItem.Text = "&Online help"
-        '
-        'WebsiteToolStripMenuItem
-        '
-        Me.WebsiteToolStripMenuItem.Name = "WebsiteToolStripMenuItem"
-        Me.WebsiteToolStripMenuItem.Size = New System.Drawing.Size(175, 22)
-        Me.WebsiteToolStripMenuItem.Tag = "http://www.rlatour.com/r4r/index.html"
-        Me.WebsiteToolStripMenuItem.Text = "&Website main page"
         '
         'ToolStripMenuItem4
         '
@@ -412,6 +414,18 @@ Partial Class frmMain
         Me.MainMenu.Size = New System.Drawing.Size(858, 24)
         Me.MainMenu.TabIndex = 0
         Me.MainMenu.Text = "MenuStrip2"
+        '
+        'ReportToolStripMenuItem
+        '
+        Me.ReportToolStripMenuItem.Name = "ReportToolStripMenuItem"
+        Me.ReportToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3
+        Me.ReportToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ReportToolStripMenuItem.Text = "&Report"
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(177, 6)
         '
         'frmMain
         '
@@ -469,4 +483,6 @@ Partial Class frmMain
     Friend WithEvents WebsiteToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CheckForUpdatesToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Friend WithEvents ReportToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
 End Class
