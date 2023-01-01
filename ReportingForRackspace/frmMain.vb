@@ -260,11 +260,17 @@ Public Class frmMain
 
             ' update datafiles and shutdown
 
+            ReLoadGlobalVariablesFromSettings()
+
             If Now > My.Settings.LastCheck.AddMinutes(5) Then
                 MainDriver(True, True)
             End If
 
-            Application.Exit()
+            If (Application.MessageLoop) Then
+                Application.Exit()
+            Else
+                Environment.Exit(1)
+            End If
 
         Else
 
