@@ -6,7 +6,6 @@
   <ShutdownMode>0</ShutdownMode>
   <EnableVisualStyles>false</EnableVisualStyles>
   <AuthenticationMode>0</AuthenticationMode>
-  <SplashScreen>frmSplash</SplashScreen>
   <SaveMySettingsOnExit>false</SaveMySettingsOnExit>
   <HighDpiMpde>false</HighDpiMpde>
 </MyApplicationData>

@@ -7,7 +7,7 @@ A Windows program providing graphical reporting of Rackspace CDN downloads
 
 ![screenshot](https://rlatour.com/r4r/images/mainscreenshot.jpg)
 
-Copyright 2022, Rob Latour, Licensed under MIT
+Copyright 2023, Rob Latour, Licensed under MIT
 
 The project is built upon the .net framework 4.6.2 with thanks and inclusion of the following:
 

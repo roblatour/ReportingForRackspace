@@ -263,6 +263,7 @@ Public Class frmMain
             ReLoadGlobalVariablesFromSettings()
 
             If Now > My.Settings.LastCheck.AddMinutes(5) Then
+                Initialize()
                 MainDriver(True, True)
             End If
 
