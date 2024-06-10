@@ -33,6 +33,6 @@ future enhancement may be to add them to the settings screen
 For more informaiton please visit  [https://rlatour.com/r4r](https://rlatour.com/r4r)
 
 
+## Support
 
-
-
+[<img alt="buy me  a coffee" width="200px" src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" />](https://www.buymeacoffee.com/roblatour)
