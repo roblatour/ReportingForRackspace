@@ -51,8 +51,6 @@ Public Class frmMain
     Private gDownloadFolder As String = String.Empty
     Private gDeCompressedFolder As String = String.Empty
     Private gCombinedFolder As String = String.Empty
-    Private gIPv4Folder As String = String.Empty
-    Private gIPv6Folder As String = String.Empty
 
     Private gIncludeExcludeFlag As String = String.Empty
     Private gFilesToInclude As String = String.Empty
@@ -526,15 +524,11 @@ Public Class frmMain
         gDownloadFolder = gDataDirectory & "\Downloaded"
         gDeCompressedFolder = gDataDirectory & "\Decompressed"
         gCombinedFolder = gDataDirectory & "\Combined"
-        gIPv4Folder = gDataDirectory & "\IPv4"
-        gIPv6Folder = gDataDirectory & "\IPv6"
 
         If Not System.IO.Directory.Exists(gDataDirectory) Then System.IO.Directory.CreateDirectory(gDataDirectory)
         If Not System.IO.Directory.Exists(gDownloadFolder) Then System.IO.Directory.CreateDirectory(gDownloadFolder)
         If Not System.IO.Directory.Exists(gDeCompressedFolder) Then System.IO.Directory.CreateDirectory(gDeCompressedFolder)
         If Not System.IO.Directory.Exists(gCombinedFolder) Then System.IO.Directory.CreateDirectory(gCombinedFolder)
-        If Not System.IO.Directory.Exists(gIPv4Folder) Then System.IO.Directory.CreateDirectory(gIPv4Folder)
-        If Not System.IO.Directory.Exists(gIPv6Folder) Then System.IO.Directory.CreateDirectory(gIPv6Folder)
 
     End Sub
 
