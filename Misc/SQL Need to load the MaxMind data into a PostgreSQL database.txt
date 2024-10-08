@@ -1,5 +1,7 @@
 ' ref: sql taken from https://dev.maxmind.com/geoip/importing-databases/postgresql?lang=en
 
+'  STEP 0: This writeup assumes you have PostgreSQL ( https://www.postgresql.org/ ) installed and running on the machine Reporting for Rackspace will be running  
+
 '  STEP 1: Get the needed Maxmind files from the MaxMind website
 
 '  download zip file from https://download.maxmind.com/geoip/databases/GeoLite2-City-CSV/download?suffix=zip
