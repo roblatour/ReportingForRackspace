@@ -30,7 +30,7 @@ Public Class frmMain
     ' future enhancement may be to add them to the settings screen
 
     Const MaxMindHost As String = "localhost"
-    Const MaxMindDatabaseName As String = "MaxMind"
+    Const MaxMindDatabaseName As String = "maxmind"
     Const MaxMindDatabaseUserID As String = "postgres"
     Const MaxMindDatabasePassword As String = "MaxMind"  ' use "MaxMind" for general release
 

@@ -1,12 +1,33 @@
 ' ref: sql taken from https://dev.maxmind.com/geoip/importing-databases/postgresql?lang=en
 
-'  STEP 0: This writeup assumes you have PostgreSQL ( https://www.postgresql.org/ ) installed and running on the machine Reporting for Rackspace will be running  
+'  STEP 1: This writeup assumes you have PostgreSQL ( https://www.postgresql.org/ ) installed and running on the machine on which Reporting for Rackspace will be running.
+   ** NOTES: 
+   ** if you want to use the precompiled versions of Reporting for Rackspace found here:
+   ** then please use "MaxMind" as your Password for user postgres when installing it; otherwise please the file frmMain.vb can be changed on line 35 to use whatever other password you would like
+   ** in any case, please make sure to remember the password you set for the (super) user postgess as you will need it in the steps below
+   
 
-'  STEP 1: Get the needed Maxmind files from the MaxMind website
+'  STEP 2: create a database named "maxmind" (without the quotes) within PostressSQL
+'  to do this run the SQL Shell from the windows command line as follows:
+
+    cd C:\Program Files\PostgreSQL\17\scripts\
+	runpsql.bat
+	
+	Server [Localhost}; (enter)
+	Datase [postgres]: (enter)
+	Port [5432]: (enter)
+	Username [postgres]: (enter)
+	Password for user postgres: (the password you created in STEP 1 above)(enter)
+	
+    CREATE DATABASE maxmind;
+	commit
+	\q
+	
+'  STEP 3: Get the needed MaxMind files from the MaxMind website
 
 '  download zip file from https://download.maxmind.com/geoip/databases/GeoLite2-City-CSV/download?suffix=zip
-'  download and unzip
-'  need these two files:
+'  unzip it
+'  needed are these two files:
 '       GeoLite2-City-Blocks-IPv4.csv
 '       GeoLite2-City-Blocks-IPv6.csv
 '  copy the above files to:
@@ -14,29 +35,30 @@
 '       c:\temp\GeoLite2-City-Blocks-IPv6.csv
 '       
 '  download zip file from https://download.maxmind.com/geoip/databases/GeoLite2-Country-CSV/download?suffix=zip
-'  download and unzip
-'  need this one file:
+'  unzip it
+'  need is this one file:
 '       GeoLite2-Country-Locations-en.csv
 '  copy the above file to:
 '       c:\temp\GeoLite2-Country-Locations-en.csv
 
 
-' STEP 2: run SQL Shell
+' STEP 4: run SQL Shell
 ' from the windows command line enter:
-"C:\Program Files\PostgreSQL\15\scripts\runpsql.bat
+    cd C:\Program Files\PostgreSQL\17\scripts\
+	runpsql.bat
 
-Server [localhost]:  {enter}
-Database [postgres]:  MaxMind{enter}
-Port [5432]: {enter}
-Username [postgres]: {enter}
-Password for user postgres: MaxMind{enter}
+	Server [localhost]:  {enter}
+	Database [postgres]:  maxmind{enter}
+	Port [5432]: {enter}
+	Username [postgres]: {enter}
+	Password for user postgres: (the password you created in STEP 1 above)(enter)
 
-'  STEP 3: you only need to drop the ables if they are pre-existing
+'  STEP 5: you only need to drop the tables below if they are pre-existing (i.e. you will not need to do this the first time you setup the database)
 
 drop table geoip2_network;
 drop table geoip2_location;
 
-'  STEP 4 create the geopip2_network table and load it
+'  STEP 6 create the geopip2_network table and load it
 
 create table geoip2_network ( network cidr not null, geoname_id int, registered_country_geoname_id int, represented_country_geoname_id int, is_anonymous_proxy bool, is_satellite_provider bool, postal_code text, latitude numeric, longitude numeric, accuracy_radius int, is_anycast bool);
 
@@ -54,11 +76,8 @@ create table geoip2_location ( geoname_id int not null, locale_code text not nul
 \copy geoip2_location from 'C:\temp\GeoLite2-Country-Locations-en.csv' with (format csv, header);
 
 
-' STEP 7: commit the above changes
+' STEP 7: commit the above changes and quit
  
 commit
-
-' STEP 8: quit
-
 \q
 
