@@ -13,7 +13,7 @@ The project is built upon the .net framework 4.6.2 with thanks and inclusion of 
 
 ![components](https://rlatour.com/r4r/images/components.jpg)
 
-A downloadable signed executable version of the program is available from  [https://rlatour.com/r4r](https://rlatour.com/r4r)
+A downloadable signed executable version of the program is available from  [https://github.com/roblatour/Concentration/releases/download/v1.7.0.0/r4setup.exe)
 
 this executable assumes a postgresSQL database preloaded with the free version of MaxMind GEOIP location data
 for more information please see:
